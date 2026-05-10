@@ -22,10 +22,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private CustomUserDetailsService userService;
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getRequestURI().startsWith("/auth/");
-    }
+    protected boolean shouldNotFilter(
+            HttpServletRequest request
+    ) {
 
+        String path = request.getRequestURI();
+
+        return path.startsWith("/api/auth/")
+                || path.startsWith("/api/profile/");
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

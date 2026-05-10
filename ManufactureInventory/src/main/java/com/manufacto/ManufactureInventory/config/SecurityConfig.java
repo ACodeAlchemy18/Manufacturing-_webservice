@@ -26,16 +26,37 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-                                           TokenAuthenticationFilter filter) throws Exception {
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            TokenAuthenticationFilter filter
+    ) throws Exception {
 
         http
-            .csrf(csrf -> csrf.disable())   // ✅ IMPORTANT (fix 403)
+
+            // ✅ Enable CORS
+            .cors(cors -> {})
+
+            // ✅ Disable CSRF
+            .csrf(csrf -> csrf.disable())
+
+            // ✅ API Authorization
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()  // ✅ VERY IMPORTANT
+
+                // Public APIs
+                .requestMatchers("/api/auth/**").permitAll()
+
+                // Profile APIs
+                .requestMatchers("/api/profile/**").permitAll()
+
+                // Other APIs
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+
+            // JWT Filter
+            .addFilterBefore(
+                filter,
+                UsernamePasswordAuthenticationFilter.class
+            );
 
         return http.build();
     }
